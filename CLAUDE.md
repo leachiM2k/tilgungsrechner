@@ -7,9 +7,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a German-language loan/mortgage amortization calculator ("Baukredit Tilgungsrechner") that calculates detailed payment schedules for construction/home loans. The project consists of two implementations:
 
 1. **Python CLI version** (`kredit_rechner.py`) - Generates amortization schedules using pandas
-2. **HTML/JavaScript web version** (`tilgungsrechner.html`) - Interactive browser-based calculator
+2. **Web version** - Interactive browser-based calculator hosted on GitHub Pages
+   - `index.html` - Main HTML structure
+   - `styles.css` - Styling
+   - `script.js` - Calculation logic and UI interactions
 
 Both implementations calculate the same core functionality: monthly payment breakdowns (interest, principal, extra payments) and remaining debt over the loan term.
+
+**Note**: `tilgungsrechner.html` is the legacy single-file version and should not be modified. Use the split version (`index.html`, `styles.css`, `script.js`) for development.
 
 ## Running the Code
 
@@ -29,9 +34,19 @@ Install dependencies:
 pip install pandas python-dateutil
 ```
 
-### HTML Version
+### Web Version
 
-Open `tilgungsrechner.html` in any modern web browser. No build process or server required - it's a standalone HTML file with inline CSS and JavaScript.
+Open `index.html` in any modern web browser. No build process or server required - static HTML/CSS/JavaScript files.
+
+For local testing:
+```bash
+# Simple HTTP server with Python
+python3 -m http.server 8000
+# Then open http://localhost:8000
+
+# Or just open the file directly
+open index.html
+```
 
 ## Architecture
 
@@ -51,17 +66,22 @@ Open `tilgungsrechner.html` in any modern web browser. No build process or serve
 - Console output showing first 15 months and end-of-term balance
 - Optional Excel export (commented out by default)
 
-### HTML/JavaScript Implementation (`tilgungsrechner.html`)
+### HTML/JavaScript Implementation (`index.html`, `styles.css`, `script.js`)
 
 **Structure**:
-- Single-file application with inline styles and JavaScript
+- Modular structure with separated concerns
+- `index.html` - DOM structure and markup
+- `styles.css` - All styling, responsive layout, color scheme
+- `script.js` - Calculation engine and DOM manipulation
 - No external dependencies or frameworks
 
-**Key Functions**:
-- `berechnen()` (line 376): Main calculation engine, mirrors Python logic
-- `toggleMethode()` (line 332): Switches between "fixed monthly payment" and "fixed initial principal rate" calculation modes
-- `addSondertilgung()` (line 346): Dynamic UI for adding extra payment entries
-- `displayResults()` (line 468): Renders summary cards and detailed payment table
+**Key Functions** (in `script.js`):
+- `berechnen()`: Main calculation engine, mirrors Python logic
+- `toggleMethode()`: Switches between "fixed monthly payment" and "fixed initial principal rate" calculation modes
+- `addSondertilgung()`: Dynamic UI for adding extra payment entries
+- `displayResults()`: Renders summary cards and detailed payment table
+- `formatCurrency()`: German locale number formatting (1.234,56 €)
+- `formatDate()`: MM.YYYY format for date display
 
 **Calculation Modes**:
 1. **Monatliche Rate** (Monthly Payment): User specifies exact monthly payment amount
@@ -99,3 +119,24 @@ The interest lock period ("Zinsbindung") marks when the fixed interest rate expi
 - Final payment is adjusted automatically if remaining debt < regular payment
 - Maximum iteration limits prevent infinite loops (1200 months in Python, 1000 in JavaScript)
 - Date formatting: Python uses `strftime("%d.%m.%Y")`, JavaScript uses `MM.YYYY` format
+
+## GitHub Pages Deployment
+
+The web version is designed for GitHub Pages hosting:
+
+1. Repository is already initialized with Git
+2. `index.html` serves as the entry point (GitHub Pages default)
+3. All assets (CSS, JS) use relative paths
+4. No build process required - purely static files
+
+To deploy:
+```bash
+# Create GitHub repository and push
+git remote add origin https://github.com/[USERNAME]/kredit_rechner.git
+git push -u origin main
+
+# Enable GitHub Pages in repository settings:
+# Settings → Pages → Source: main branch → Save
+```
+
+The site will be available at: `https://[USERNAME].github.io/kredit_rechner/`

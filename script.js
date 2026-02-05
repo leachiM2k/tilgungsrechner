@@ -4,13 +4,19 @@ function toggleMethode() {
     const methode = document.querySelector('input[name="methode"]:checked').value;
     const rateGroup = document.getElementById('rate-group');
     const tilgungGroup = document.getElementById('tilgung-group');
+    const monatlicherate = document.getElementById('monatlicherate');
+    const tilgungssatz = document.getElementById('tilgungssatz');
 
     if (methode === 'rate') {
         rateGroup.classList.remove('hidden');
         tilgungGroup.classList.add('hidden');
+        monatlicherate.required = true;
+        tilgungssatz.required = false;
     } else {
         rateGroup.classList.add('hidden');
         tilgungGroup.classList.remove('hidden');
+        monatlicherate.required = false;
+        tilgungssatz.required = true;
     }
 }
 
@@ -44,7 +50,11 @@ function formatDate(date) {
     return `${month}.${year}`;
 }
 
-function berechnen() {
+function berechnen(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
     const startdatum = new Date(document.getElementById('startdatum').value);
     const darlehensbetrag = parseFloat(document.getElementById('darlehensbetrag').value);
     const sollzins = parseFloat(document.getElementById('sollzins').value) / 100;
@@ -134,11 +144,26 @@ function berechnen() {
     }
 
     displayResults(tilgungsplan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, darlehensbetrag, zinsbindungMonat);
+    updateURL();
 }
 
 function displayResults(plan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, darlehensbetrag, zinsbindungMonat) {
     const zinsbindungEnde = plan.find(p => p.monat === zinsbindungMonat);
     const restschuldZinsbindung = zinsbindungEnde ? zinsbindungEnde.restschuld : 0;
+
+    const gesamtbetrag = gesamtZinsen + gesamtTilgung + gesamtSondertilgung;
+
+    // Laufzeit in Jahren und Monaten
+    const jahre = Math.floor(plan.length / 12);
+    const monate = plan.length % 12;
+    let laufzeitText = '';
+    if (jahre > 0 && monate > 0) {
+        laufzeitText = `${jahre} ${jahre === 1 ? 'Jahr' : 'Jahre'}, ${monate} ${monate === 1 ? 'Monat' : 'Monate'}`;
+    } else if (jahre > 0) {
+        laufzeitText = `${jahre} ${jahre === 1 ? 'Jahr' : 'Jahre'}`;
+    } else {
+        laufzeitText = `${monate} ${monate === 1 ? 'Monat' : 'Monate'}`;
+    }
 
     const summaryHTML = `
         <div class="summary-card">
@@ -150,8 +175,8 @@ function displayResults(plan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, 
             <p>${formatCurrency(gesamtZinsen)}</p>
         </div>
         <div class="summary-card">
-            <h4>Gesamttilgung</h4>
-            <p>${formatCurrency(gesamtTilgung + gesamtSondertilgung)}</p>
+            <h4>Gesamtbetrag inkl. Zinsen</h4>
+            <p>${formatCurrency(gesamtbetrag)}</p>
         </div>
         <div class="summary-card">
             <h4>Restschuld bei Zinsbindungsende</h4>
@@ -159,7 +184,7 @@ function displayResults(plan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, 
         </div>
         <div class="summary-card">
             <h4>Laufzeit</h4>
-            <p>${plan.length} Monate</p>
+            <p>${laufzeitText}</p>
         </div>
     `;
 
@@ -188,7 +213,116 @@ function displayResults(plan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, 
     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Setze das heutige Datum beim Laden der Seite
+function updateURL() {
+    const params = new URLSearchParams();
+
+    // Basisdaten
+    const startdatum = document.getElementById('startdatum').value;
+    const darlehensbetrag = document.getElementById('darlehensbetrag').value;
+    const sollzins = document.getElementById('sollzins').value;
+    const zinsbindung = document.getElementById('zinsbindung').value;
+    const methode = document.querySelector('input[name="methode"]:checked').value;
+
+    if (startdatum) params.set('startdatum', startdatum);
+    if (darlehensbetrag) params.set('darlehensbetrag', darlehensbetrag);
+    if (sollzins) params.set('sollzins', sollzins);
+    if (zinsbindung) params.set('zinsbindung', zinsbindung);
+    params.set('methode', methode);
+
+    // Methoden-spezifische Parameter
+    if (methode === 'rate') {
+        const monatlicherate = document.getElementById('monatlicherate').value;
+        if (monatlicherate) params.set('monatlicherate', monatlicherate);
+    } else {
+        const tilgungssatz = document.getElementById('tilgungssatz').value;
+        if (tilgungssatz) params.set('tilgungssatz', tilgungssatz);
+    }
+
+    // Sondertilgungen
+    const stMonat = document.querySelectorAll('.st-monat');
+    const stBetrag = document.querySelectorAll('.st-betrag');
+    const sondertilgungen = [];
+
+    for (let i = 0; i < stMonat.length; i++) {
+        const monat = parseInt(stMonat[i].value);
+        const betrag = parseFloat(stBetrag[i].value);
+        if (!isNaN(monat) && !isNaN(betrag) && monat > 0 && betrag > 0) {
+            sondertilgungen.push(`${monat}:${betrag}`);
+        }
+    }
+
+    if (sondertilgungen.length > 0) {
+        params.set('st', sondertilgungen.join(','));
+    }
+
+    // URL aktualisieren ohne Seite neu zu laden
+    const newURL = window.location.pathname + '?' + params.toString();
+    window.history.replaceState({}, '', newURL);
+}
+
+function loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.size === 0) {
+        // Keine Parameter vorhanden, setze Standard-Startdatum
+        document.getElementById('startdatum').valueAsDate = new Date();
+        return false;
+    }
+
+    // Basisdaten laden
+    if (params.has('startdatum')) {
+        document.getElementById('startdatum').value = params.get('startdatum');
+    }
+    if (params.has('darlehensbetrag')) {
+        document.getElementById('darlehensbetrag').value = params.get('darlehensbetrag');
+    }
+    if (params.has('sollzins')) {
+        document.getElementById('sollzins').value = params.get('sollzins');
+    }
+    if (params.has('zinsbindung')) {
+        document.getElementById('zinsbindung').value = params.get('zinsbindung');
+    }
+
+    // Methode laden
+    if (params.has('methode')) {
+        const methode = params.get('methode');
+        document.querySelector(`input[name="methode"][value="${methode}"]`).checked = true;
+        toggleMethode();
+
+        if (methode === 'rate' && params.has('monatlicherate')) {
+            document.getElementById('monatlicherate').value = params.get('monatlicherate');
+        } else if (methode === 'tilgung' && params.has('tilgungssatz')) {
+            document.getElementById('tilgungssatz').value = params.get('tilgungssatz');
+        }
+    }
+
+    // Sondertilgungen laden
+    if (params.has('st')) {
+        const sondertilgungen = params.get('st').split(',');
+        sondertilgungen.forEach(st => {
+            const [monat, betrag] = st.split(':');
+            if (monat && betrag) {
+                addSondertilgung();
+                const entries = document.querySelectorAll('.sondertilgung-entry');
+                const lastEntry = entries[entries.length - 1];
+                lastEntry.querySelector('.st-monat').value = monat;
+                lastEntry.querySelector('.st-betrag').value = betrag;
+            }
+        });
+    }
+
+    return true;
+}
+
+// Setze das heutige Datum beim Laden der Seite und lade URL-Parameter
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('startdatum').valueAsDate = new Date();
+    const hasParams = loadFromURL();
+
+    // Form-Submit-Handler
+    document.getElementById('calculator-form').addEventListener('submit', berechnen);
+
+    // Wenn Parameter vorhanden sind, führe automatisch die Berechnung durch
+    if (hasParams) {
+        berechnen();
+    }
 });
