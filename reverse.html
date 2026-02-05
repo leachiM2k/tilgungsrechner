@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kredit-Rückrechner - Darlehensdaten ermitteln</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Kredit-Rückrechner</h1>
+            <p>Ermitteln Sie Ihre ursprünglichen Darlehensdaten</p>
+            <div style="margin-top: 10px;">
+                <a href="index.html" style="color: #fff; text-decoration: underline;">→ Zum normalen Tilgungsrechner</a>
+            </div>
+        </div>
+
+        <div class="content">
+            <form id="reverse-calculator-form" class="form-section">
+                <div class="info-box" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #1565c0; border: 2px solid #90caf9;">
+                    <strong>💡 So funktioniert's:</strong> Geben Sie die Jahreswerte vom Kontoauszug ein.
+                    Der Rechner berechnet daraus den <strong>exakten Zinssatz</strong> und die Restschuld am Jahresanfang.
+                </div>
+
+                <div class="form-group">
+                    <label for="jahr">Jahr des Kontoauszugs</label>
+                    <input type="number" id="jahr" placeholder="2024" min="2000" max="2100" required>
+                    <small style="color: #666; font-size: 0.9em;">Welches Jahr betrachten Sie?</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="restschuld-ende">Restschuld am Ende des Jahres (€)</label>
+                    <input type="number" id="restschuld-ende" placeholder="240000" step="0.01" required>
+                    <small style="color: #666; font-size: 0.9em;">Welche Restschuld zeigt der Kontoauszug am 31.12.?</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="zinsen-jahr">Gezahlte Zinsen im Jahr (€)</label>
+                    <input type="number" id="zinsen-jahr" placeholder="6000" step="0.01" required>
+                    <small style="color: #666; font-size: 0.9em;">Summe aller Zinszahlungen im Jahr</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="tilgung-jahr">Geleistete Tilgung im Jahr (€)</label>
+                    <input type="number" id="tilgung-jahr" placeholder="8400" step="0.01" required>
+                    <small style="color: #666; font-size: 0.9em;">Summe aller Tilgungszahlungen im Jahr</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="startdatum-kredit">Vermuteter Kreditbeginn (optional)</label>
+                    <input type="date" id="startdatum-kredit">
+                    <small style="color: #666; font-size: 0.9em;">Wann hat der Kredit ungefähr begonnen? Berechnet den ursprünglichen Darlehensbetrag.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="zinsbindung-jahre">Zinsbindung (Jahre)</label>
+                    <input type="number" id="zinsbindung-jahre" placeholder="10" step="1" required>
+                    <small style="color: #666; font-size: 0.9em;">Wie lange ist/war Ihr Zinssatz festgeschrieben?</small>
+                </div>
+
+                <button type="submit" class="btn-calculate">Darlehensdaten berechnen</button>
+            </form>
+
+            <div id="results-reverse" class="results hidden">
+                <h2 style="color: #333; margin-bottom: 20px;">📊 Berechnete Darlehensdaten</h2>
+                <div class="summary" id="summary-reverse"></div>
+
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; color: #333; border: 2px solid #e0e0e0;">
+                    <h3 style="margin-top: 0;">ℹ️ Erläuterung</h3>
+                    <div id="explanation"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="reverse.js"></script>
+</body>
+</html>
