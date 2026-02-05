@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baukredit Tilgungsrechner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .sondertilgung-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            margin-top: 15px;
+        }
+        
+        .sondertilgung-section h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        .sondertilgung-entry {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .sondertilgung-entry input {
+            flex: 1;
+        }
+        
+        .btn-remove {
+            padding: 10px 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        
+        .btn-remove:hover {
+            background: #c0392b;
+        }
+        
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        
+        .btn-add:hover {
+            background: #5568d3;
+        }
+        
+        .btn-calculate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .summary-card h4 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .summary-card p {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        th:first-child {
+            text-align: left;
+        }
+        
+        td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .highlight {
+            background: #fff3cd !important;
+        }
+        
+        .zinsbindung-end {
+            background: #d1ecf1 !important;
+            font-weight: 600;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Baukredit Tilgungsrechner</h1>
+            <p>Berechnen Sie Ihren individuellen Tilgungsplan</p>
+        </div>
+        
+        <div class="content">
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="startdatum">Startdatum</label>
+                    <input type="date" id="startdatum" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="darlehensbetrag">Darlehensbetrag (€)</label>
+                    <input type="number" id="darlehensbetrag" placeholder="250000" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sollzins">Sollzins p.a. (%)</label>
+                    <input type="number" id="sollzins" placeholder="3.5" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="zinsbindung">Sollzinsbindung (Jahre)</label>
+                    <input type="number" id="zinsbindung" placeholder="10" step="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Berechnungsmethode</label>
+                    <div style="display: flex; gap: 20px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="methode" value="rate" checked onchange="toggleMethode()" style="width: auto; margin-right: 8px;">
+                            Monatliche Rate
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="methode" value="tilgung" onchange="toggleMethode()" style="width: auto; margin-right: 8px;">
+                            Anfängliche Tilgung
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="rate-group">
+                    <label for="monatlicherate">Monatliche Rate (€)</label>
+                    <input type="number" id="monatlicherate" placeholder="1200" step="0.01">
+                </div>
+                
+                <div class="form-group hidden" id="tilgung-group">
+                    <label for="tilgungssatz">Anfänglicher Tilgungssatz p.a. (%)</label>
+                    <input type="number" id="tilgungssatz" placeholder="2.0" step="0.01">
+                </div>
+                
+                <div class="sondertilgung-section">
+                    <h3>Sondertilgungen</h3>
+                    <div id="sondertilgungen"></div>
+                    <button class="btn-add" onclick="addSondertilgung()">+ Sondertilgung hinzufügen</button>
+                </div>
+                
+                <button class="btn-calculate" onclick="berechnen()">Tilgungsplan berechnen</button>
+            </div>
+            
+            <div id="results" class="results hidden">
+                <div class="summary" id="summary"></div>
+                <div class="table-container">
+                    <table id="tilgungsplan">
+                        <thead>
+                            <tr>
+                                <th>Monat</th>
+                                <th>Rate</th>
+                                <th>Zinsen</th>
+                                <th>Tilgung</th>
+                                <th>Sondertilgung</th>
+                                <th>Restschuld</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tilgungsplan-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sondertilgungCounter = 0;
+
+        function toggleMethode() {
+            const methode = document.querySelector('input[name="methode"]:checked').value;
+            const rateGroup = document.getElementById('rate-group');
+            const tilgungGroup = document.getElementById('tilgung-group');
+            
+            if (methode === 'rate') {
+                rateGroup.classList.remove('hidden');
+                tilgungGroup.classList.add('hidden');
+            } else {
+                rateGroup.classList.add('hidden');
+                tilgungGroup.classList.remove('hidden');
+            }
+        }
+
+        function addSondertilgung() {
+            const container = document.getElementById('sondertilgungen');
+            const div = document.createElement('div');
+            div.className = 'sondertilgung-entry';
+            div.innerHTML = `
+                <input type="number" placeholder="Monat (z.B. 12)" min="1" step="1" data-id="${sondertilgungCounter}" class="st-monat">
+                <input type="number" placeholder="Betrag (€)" step="0.01" data-id="${sondertilgungCounter}" class="st-betrag">
+                <button class="btn-remove" onclick="removeSondertilgung(this)">✕</button>
+            `;
+            container.appendChild(div);
+            sondertilgungCounter++;
+        }
+
+        function removeSondertilgung(btn) {
+            btn.parentElement.remove();
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('de-DE', {
+                style: 'currency',
+                currency: 'EUR'
+            }).format(value);
+        }
+
+        function formatDate(date) {
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${month}.${year}`;
+        }
+
+        function berechnen() {
+            const startdatum = new Date(document.getElementById('startdatum').value);
+            const darlehensbetrag = parseFloat(document.getElementById('darlehensbetrag').value);
+            const sollzins = parseFloat(document.getElementById('sollzins').value) / 100;
+            const zinsbindung = parseInt(document.getElementById('zinsbindung').value);
+            const methode = document.querySelector('input[name="methode"]:checked').value;
+            
+            let monatlicheRate;
+            
+            if (methode === 'rate') {
+                monatlicheRate = parseFloat(document.getElementById('monatlicherate').value);
+                if (isNaN(monatlicheRate)) {
+                    alert('Bitte geben Sie die monatliche Rate ein.');
+                    return;
+                }
+            } else {
+                const tilgungssatz = parseFloat(document.getElementById('tilgungssatz').value) / 100;
+                if (isNaN(tilgungssatz)) {
+                    alert('Bitte geben Sie den anfänglichen Tilgungssatz ein.');
+                    return;
+                }
+                // Berechne monatliche Rate aus Tilgungssatz
+                monatlicheRate = darlehensbetrag * (sollzins + tilgungssatz) / 12;
+            }
+
+            if (!document.getElementById('startdatum').value || isNaN(darlehensbetrag) || isNaN(sollzins) || isNaN(zinsbindung)) {
+                alert('Bitte füllen Sie alle Pflichtfelder aus.');
+                return;
+            }
+
+            const sondertilgungen = {};
+            const stMonat = document.querySelectorAll('.st-monat');
+            const stBetrag = document.querySelectorAll('.st-betrag');
+            
+            for (let i = 0; i < stMonat.length; i++) {
+                const monat = parseInt(stMonat[i].value);
+                const betrag = parseFloat(stBetrag[i].value);
+                if (!isNaN(monat) && !isNaN(betrag) && monat > 0 && betrag > 0) {
+                    sondertilgungen[monat] = betrag;
+                }
+            }
+
+            let restschuld = darlehensbetrag;
+            const monatszins = sollzins / 12;
+            const zinsbindungMonat = zinsbindung * 12;
+            
+            const tilgungsplan = [];
+            let gesamtZinsen = 0;
+            let gesamtTilgung = 0;
+            let gesamtSondertilgung = 0;
+            let monat = 0;
+
+            while (restschuld > 0.01) {
+                monat++;
+                const aktuellesDatum = new Date(startdatum);
+                aktuellesDatum.setMonth(aktuellesDatum.getMonth() + monat - 1);
+
+                const zinsen = restschuld * monatszins;
+                let tilgung = monatlicheRate - zinsen;
+                let sondertilgung = sondertilgungen[monat] || 0;
+
+                if (tilgung + sondertilgung > restschuld) {
+                    tilgung = restschuld;
+                    sondertilgung = 0;
+                }
+
+                const rate = zinsen + tilgung;
+                restschuld = restschuld - tilgung - sondertilgung;
+
+                if (restschuld < 0) restschuld = 0;
+
+                gesamtZinsen += zinsen;
+                gesamtTilgung += tilgung;
+                gesamtSondertilgung += sondertilgung;
+
+                tilgungsplan.push({
+                    monat: monat,
+                    datum: formatDate(aktuellesDatum),
+                    rate: rate,
+                    zinsen: zinsen,
+                    tilgung: tilgung,
+                    sondertilgung: sondertilgung,
+                    restschuld: restschuld,
+                    istZinsbindungEnde: monat === zinsbindungMonat
+                });
+
+                if (monat > 1000) break;
+            }
+
+            displayResults(tilgungsplan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, darlehensbetrag, zinsbindungMonat);
+        }
+
+        function displayResults(plan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, darlehensbetrag, zinsbindungMonat) {
+            const zinsbindungEnde = plan.find(p => p.monat === zinsbindungMonat);
+            const restschuldZinsbindung = zinsbindungEnde ? zinsbindungEnde.restschuld : 0;
+
+            const summaryHTML = `
+                <div class="summary-card">
+                    <h4>Darlehensbetrag</h4>
+                    <p>${formatCurrency(darlehensbetrag)}</p>
+                </div>
+                <div class="summary-card">
+                    <h4>Gesamtzinsen</h4>
+                    <p>${formatCurrency(gesamtZinsen)}</p>
+                </div>
+                <div class="summary-card">
+                    <h4>Gesamttilgung</h4>
+                    <p>${formatCurrency(gesamtTilgung + gesamtSondertilgung)}</p>
+                </div>
+                <div class="summary-card">
+                    <h4>Restschuld bei Zinsbindungsende</h4>
+                    <p>${formatCurrency(restschuldZinsbindung)}</p>
+                </div>
+                <div class="summary-card">
+                    <h4>Laufzeit</h4>
+                    <p>${plan.length} Monate</p>
+                </div>
+            `;
+
+            document.getElementById('summary').innerHTML = summaryHTML;
+
+            const tbody = document.getElementById('tilgungsplan-body');
+            tbody.innerHTML = '';
+
+            plan.forEach(row => {
+                const tr = document.createElement('tr');
+                if (row.sondertilgung > 0) tr.className = 'highlight';
+                if (row.istZinsbindungEnde) tr.className = 'zinsbindung-end';
+                
+                tr.innerHTML = `
+                    <td>${row.datum}</td>
+                    <td>${formatCurrency(row.rate)}</td>
+                    <td>${formatCurrency(row.zinsen)}</td>
+                    <td>${formatCurrency(row.tilgung)}</td>
+                    <td>${row.sondertilgung > 0 ? formatCurrency(row.sondertilgung) : '-'}</td>
+                    <td>${formatCurrency(row.restschuld)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        document.getElementById('startdatum').valueAsDate = new Date();
+    </script>
+</body>
+</html>

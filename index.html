@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baukredit Tilgungsrechner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Baukredit Tilgungsrechner</h1>
+            <p>Berechnen Sie Ihren individuellen Tilgungsplan</p>
+        </div>
+
+        <div class="content">
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="startdatum">Startdatum</label>
+                    <input type="date" id="startdatum" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="darlehensbetrag">Darlehensbetrag (€)</label>
+                    <input type="number" id="darlehensbetrag" placeholder="250000" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="sollzins">Sollzins p.a. (%)</label>
+                    <input type="number" id="sollzins" placeholder="3.5" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="zinsbindung">Sollzinsbindung (Jahre)</label>
+                    <input type="number" id="zinsbindung" placeholder="10" step="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Berechnungsmethode</label>
+                    <div style="display: flex; gap: 20px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="methode" value="rate" checked onchange="toggleMethode()" style="width: auto; margin-right: 8px;">
+                            Monatliche Rate
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="methode" value="tilgung" onchange="toggleMethode()" style="width: auto; margin-right: 8px;">
+                            Anfängliche Tilgung
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="rate-group">
+                    <label for="monatlicherate">Monatliche Rate (€)</label>
+                    <input type="number" id="monatlicherate" placeholder="1200" step="0.01">
+                </div>
+
+                <div class="form-group hidden" id="tilgung-group">
+                    <label for="tilgungssatz">Anfänglicher Tilgungssatz p.a. (%)</label>
+                    <input type="number" id="tilgungssatz" placeholder="2.0" step="0.01">
+                </div>
+
+                <div class="sondertilgung-section">
+                    <h3>Sondertilgungen</h3>
+                    <div id="sondertilgungen"></div>
+                    <button class="btn-add" onclick="addSondertilgung()">+ Sondertilgung hinzufügen</button>
+                </div>
+
+                <button class="btn-calculate" onclick="berechnen()">Tilgungsplan berechnen</button>
+            </div>
+
+            <div id="results" class="results hidden">
+                <div class="summary" id="summary"></div>
+                <div class="table-container">
+                    <table id="tilgungsplan">
+                        <thead>
+                            <tr>
+                                <th>Monat</th>
+                                <th>Rate</th>
+                                <th>Zinsen</th>
+                                <th>Tilgung</th>
+                                <th>Sondertilgung</th>
+                                <th>Restschuld</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tilgungsplan-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
