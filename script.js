@@ -50,27 +50,79 @@ function formatDate(date) {
     return `${month}.${year}`;
 }
 
+/**
+ *
+ * @returns {{
+ *      startdatum: string,
+ *      darlehensbetrag: number,
+ *      sollzins: number,
+ *      zinsbindung: number,
+ *      monatlicherate: number,
+ *      tilgungssatz: number
+ * }}
+ */
+function getValues() {
+    const fieldValueMapping = {
+        'startdatum': { field: 'startdatum', type: 'date' },
+        'darlehensbetrag': { field: 'darlehensbetrag', type: 'float' },
+        'sollzins': { field: 'sollzins', type: 'float' },
+        'zinsbindung': { field: 'zinsbindung', type: 'int' },
+        'monatlicherate': { field: 'monatlicherate', type: 'float' },
+        'tilgungssatz': { field: 'tilgungssatz', type: 'float' }
+    };
+
+    const values = {};
+    for (const [fieldId, param] of Object.entries(fieldValueMapping)) {
+        try {
+            const element = document.getElementById(fieldId);
+            if (element) {
+                switch (param.type) {
+                    case 'int':
+                        values[param.field] = parseInt(element.value.replace(/,/g, '.'));
+                        break;
+                    case 'float':
+                        values[param.field] = parseFloat(element.value.replace(/,/g, '.'));
+                        break;
+                    case 'date':
+                        if (element.value) {
+                            values[param.field] = new Date(element.value);
+                        }
+                        break;
+                    default:
+                        values[param.field] = element.value;
+                }
+            }
+        } catch (e) {
+            console.error(`Error parsing field ${fieldId}:`, e);
+            values[param.field] = null;
+        }
+    }
+    return values;
+}
+
 function berechnen(event) {
     if (event) {
         event.preventDefault();
     }
 
-    const startdatum = new Date(document.getElementById('startdatum').value);
-    const darlehensbetrag = parseFloat(document.getElementById('darlehensbetrag').value);
-    const sollzins = parseFloat(document.getElementById('sollzins').value) / 100;
-    const zinsbindung = parseInt(document.getElementById('zinsbindung').value);
+    const values = getValues();
+
+    const startdatum = values.startdatum;
+    const darlehensbetrag = values.darlehensbetrag;
+    const sollzins = values.sollzins / 100;
+    const zinsbindung = values.zinsbindung;
     const methode = document.querySelector('input[name="methode"]:checked').value;
 
     let monatlicheRate;
 
     if (methode === 'rate') {
-        monatlicheRate = parseFloat(document.getElementById('monatlicherate').value);
+        monatlicheRate = values.monatlicherate;
         if (isNaN(monatlicheRate)) {
             alert('Bitte geben Sie die monatliche Rate ein.');
             return;
         }
     } else {
-        const tilgungssatz = parseFloat(document.getElementById('tilgungssatz').value) / 100;
+        const tilgungssatz = values.tilgungssatz / 100;
         if (isNaN(tilgungssatz)) {
             alert('Bitte geben Sie den anfänglichen Tilgungssatz ein.');
             return;
@@ -79,7 +131,7 @@ function berechnen(event) {
         monatlicheRate = darlehensbetrag * (sollzins + tilgungssatz) / 12;
     }
 
-    if (!document.getElementById('startdatum').value || isNaN(darlehensbetrag) || isNaN(sollzins) || isNaN(zinsbindung)) {
+    if (!values.startdatum || isNaN(darlehensbetrag) || isNaN(sollzins) || isNaN(zinsbindung)) {
         alert('Bitte füllen Sie alle Pflichtfelder aus.');
         return;
     }
@@ -325,4 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (hasParams) {
         berechnen();
     }
+
+    // setze required-Attribute basierend auf der gewählten Methode
+    toggleMethode();
 });

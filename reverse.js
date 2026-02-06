@@ -9,35 +9,70 @@ function formatPercent(value) {
     return value.toFixed(2) + ' %';
 }
 
+/**
+ *
+ * @returns {{
+ *     jahr: number,
+ *     restschuldEnde: number,
+ *     zinsenJahr: number,
+ *     tilgungJahr: number,
+ *     startdatumKreditInput: string,
+ *     zinsbindungJahre: number
+ * }}
+ */
+function getValues() {
+    const fieldValueMapping = {
+        'jahr': { field: 'jahr', type: 'int' },
+        'restschuld-ende': { field: 'restschuldEnde', type: 'float' },
+        'zinsen-jahr': { field: 'zinsenJahr', type: 'float' },
+        'tilgung-jahr': { field: 'tilgungJahr', type: 'float' },
+        'startdatum-kredit': { field: 'startdatumKreditInput', type: 'string' },
+        'zinsbindung-jahre': { field: 'zinsbindungJahre', type: 'int' }
+    };
+
+    const values = {};
+    for (const [fieldId, param] of Object.entries(fieldValueMapping)) {
+        const element = document.getElementById(fieldId);
+        if (element) {
+            switch (param.type) {
+                case 'int':
+                    values[param.field] = parseInt(element.value.replace(/,/g, '.'));
+                    break;
+                case 'float':
+                    values[param.field] = parseFloat(element.value.replace(/,/g, '.'));
+                    break;
+                default:
+                    values[param.field] = element.value;
+            }
+        }
+    }
+    return values;
+}
+
 function berechneRueckwaerts(event) {
     if (event) {
         event.preventDefault();
     }
 
-    const jahr = parseInt(document.getElementById('jahr').value);
-    const restschuldEnde = parseFloat(document.getElementById('restschuld-ende').value);
-    const zinsenJahr = parseFloat(document.getElementById('zinsen-jahr').value);
-    const tilgungJahr = parseFloat(document.getElementById('tilgung-jahr').value);
-    const startdatumKreditInput = document.getElementById('startdatum-kredit').value;
-    const zinsbindungJahre = parseInt(document.getElementById('zinsbindung-jahre').value);
+    const values = getValues();
 
     // Berechne Restschuld am Jahresanfang
-    const restschuldAnfang = restschuldEnde + tilgungJahr;
+    const restschuldAnfang = values.restschuldEnde + values.tilgungJahr;
 
     // Monatliche Rate (konstant über das Jahr)
-    const monatlicheRate = (zinsenJahr + tilgungJahr) / 12;
+    const monatlicheRate = (values.zinsenJahr + values.tilgungJahr) / 12;
 
     // Berechne Zinssatz mit Bisection-Methode
-    const zinssatz = findeZinssatzExakt(restschuldAnfang, restschuldEnde, monatlicheRate, zinsenJahr);
+    const zinssatz = findeZinssatzExakt(restschuldAnfang, values.restschuldEnde, monatlicheRate, values.zinsenJahr);
 
     // Berechne ursprünglichen Darlehensbetrag, wenn Startdatum angegeben
     let urspruenglicherBetrag = null;
     let startdatumKredit = null;
     let monateGelaufen = null;
 
-    if (startdatumKreditInput) {
-        startdatumKredit = new Date(startdatumKreditInput);
-        const jahresanfang = new Date(jahr, 0, 1); // 1. Januar des Jahres
+    if (values.startdatumKreditInput) {
+        startdatumKredit = new Date(values.startdatumKreditInput);
+        const jahresanfang = new Date(values.jahr, 0, 1); // 1. Januar des Jahres
 
         // Berechne Monate zwischen Kreditbeginn und Jahresanfang
         const monateZwischen = (jahresanfang.getFullYear() - startdatumKredit.getFullYear()) * 12
@@ -59,7 +94,7 @@ function berechneRueckwaerts(event) {
             urspruenglicherBetrag = restschuld;
 
             // Berechne Restschuld beim Zinsbindungsende
-            const monateZinsbindung = zinsbindungJahre * 12;
+            const monateZinsbindung = values.zinsbindungJahre * 12;
             let restschuldZinsbindung = urspruenglicherBetrag;
 
             for (let i = 0; i < monateZinsbindung; i++) {
@@ -73,16 +108,16 @@ function berechneRueckwaerts(event) {
                 }
             }
 
-            displayResultsReverse(jahr, zinssatz, restschuldAnfang, restschuldEnde, zinsenJahr, tilgungJahr,
-                                  monatlicheRate, zinsbindungJahre, urspruenglicherBetrag, startdatumKredit,
+            displayResultsReverse(values.jahr, zinssatz, restschuldAnfang, values.restschuldEnde, values.zinsenJahr, values.tilgungJahr,
+                                  monatlicheRate, values.zinsbindungJahre, urspruenglicherBetrag, startdatumKredit,
                                   monateGelaufen, restschuldZinsbindung);
             updateURL();
             return;
         }
     }
 
-    displayResultsReverse(jahr, zinssatz, restschuldAnfang, restschuldEnde, zinsenJahr, tilgungJahr,
-                          monatlicheRate, zinsbindungJahre, null, null, null, null);
+    displayResultsReverse(values.jahr, zinssatz, restschuldAnfang, values.restschuldEnde, values.zinsenJahr, values.tilgungJahr,
+                          monatlicheRate, values.zinsbindungJahre, null, null, null, null);
     updateURL();
 }
 
@@ -281,19 +316,14 @@ function updateURL() {
     const params = new URLSearchParams();
 
     // Basisdaten
-    const jahr = document.getElementById('jahr').value;
-    const restschuldEnde = document.getElementById('restschuld-ende').value;
-    const zinsenJahr = document.getElementById('zinsen-jahr').value;
-    const tilgungJahr = document.getElementById('tilgung-jahr').value;
-    const startdatumKredit = document.getElementById('startdatum-kredit').value;
-    const zinsbindungJahre = document.getElementById('zinsbindung-jahre').value;
+    const values = getValues();
 
-    if (jahr) params.set('jahr', jahr);
-    if (restschuldEnde) params.set('restschuld', restschuldEnde);
-    if (zinsenJahr) params.set('zinsen', zinsenJahr);
-    if (tilgungJahr) params.set('tilgung', tilgungJahr);
-    if (startdatumKredit) params.set('start', startdatumKredit);
-    if (zinsbindungJahre) params.set('zinsbindung', zinsbindungJahre);
+    if (values.jahr) params.set('jahr', values.jahr);
+    if (values.restschuldEnde) params.set('restschuld', values.restschuldEnde);
+    if (values.zinsenJahr) params.set('zinsen', values.zinsenJahr);
+    if (values.tilgungJahr) params.set('tilgung', values.tilgungJahr);
+    if (values.startdatumKreditInput) params.set('start', values.startdatumKreditInput);
+    if (values.zinsbindungJahre) params.set('zinsbindung', values.zinsbindungJahre);
 
     // URL aktualisieren ohne Seite neu zu laden
     const newURL = window.location.pathname + '?' + params.toString();
