@@ -3,94 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baukredit Tilgungsrechner</title>
+    <title>Tilgungsrechner — Baufinanzierung transparent berechnen</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>💰 Baukredit Tilgungsrechner</h1>
-            <p>Berechnen Sie Ihren individuellen Tilgungsplan</p>
-            <div style="margin-top: 10px;">
-                <a href="reverse.html" style="color: #fff; text-decoration: underline;">→ Darlehensdaten ermitteln (Rückrechner)</a>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-label">Baufinanzierung</div>
+            <h1 class="hero-title">
+                Verstehen Sie<br>
+                Ihre Tilgung.
+            </h1>
+            <p class="hero-description">
+                Ein präziser Tilgungsrechner für Ihre Baufinanzierung.
+                Berechnen Sie Ihre monatlichen Raten, visualisieren Sie
+                den gesamten Kreditverlauf und planen Sie Sondertilgungen —
+                transparent und im Detail.
+            </p>
+            <div class="hero-features">
+                <div class="feature">
+                    <div class="feature-icon">01</div>
+                    <div class="feature-text">
+                        <strong>Monatsgenaue Berechnung</strong>
+                        <span>Vollständiger Tilgungsplan über die gesamte Laufzeit</span>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">02</div>
+                    <div class="feature-text">
+                        <strong>Flexible Sondertilgungen</strong>
+                        <span>Planen Sie zusätzliche Zahlungen für jeden Monat</span>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">03</div>
+                    <div class="feature-text">
+                        <strong>Zwei Berechnungsmethoden</strong>
+                        <span>Nach fester Rate oder anfänglichem Tilgungssatz</span>
+                    </div>
+                </div>
+            </div>
+            <a href="#calculator" class="cta-button"><span>Jetzt berechnen</span></a>
+            <div class="hero-tools">
+                <a href="reverse.html" class="tool-link">→ Rückrechner: Darlehensdaten ermitteln</a>
             </div>
         </div>
+    </section>
 
-        <div class="content">
-            <form id="calculator-form" class="form-section">
-                <div class="form-group">
-                    <label for="startdatum">Startdatum</label>
-                    <input type="date" id="startdatum" required>
-                </div>
+    <!-- Calculator Section -->
+    <section class="calculator-section" id="calculator">
+        <div class="section-header">
+            <div class="section-label">Rechner</div>
+            <h2 class="section-title">Ihre Kreditdaten</h2>
+        </div>
 
-                <div class="form-group">
-                    <label for="darlehensbetrag">Darlehensbetrag (€)</label>
-                    <input type="number" id="darlehensbetrag" placeholder="250000" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="sollzins">Sollzins p.a. (%)</label>
-                    <input type="number" id="sollzins" placeholder="3.5" step="0.01" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="zinsbindung">Sollzinsbindung (Jahre)</label>
-                    <input type="number" id="zinsbindung" placeholder="10" step="1" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Berechnungsmethode</label>
-                    <div style="display: flex; gap: 20px; margin-top: 8px;">
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="radio" name="methode" value="rate" checked onchange="toggleMethode()" style="width: auto; margin-right: 8px;">
-                            Monatliche Rate
+        <form id="calculator-form" class="calculator-form">
+            <!-- Basisdaten -->
+            <div class="form-section">
+                <h3 class="form-section-title">Basisdaten</h3>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="startdatum" class="form-label">
+                            Startdatum
+                            <span class="info-icon" data-tooltip="Das Datum, an dem die Kreditauszahlung erfolgt und die erste Rate fällig wird. Ab diesem Zeitpunkt beginnt die Zinsberechnung.">?</span>
                         </label>
-                        <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="radio" name="methode" value="tilgung" onchange="toggleMethode()" style="width: auto; margin-right: 8px;">
-                            Anfängliche Tilgung
+                        <input type="date" id="startdatum" class="form-input" required>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="darlehensbetrag" class="form-label">
+                            Darlehensbetrag
+                            <span class="info-icon" data-tooltip="Die Kreditsumme, die Sie von der Bank erhalten. Dies ist der Betrag, den Sie für den Kauf oder Bau Ihrer Immobilie aufnehmen.">?</span>
                         </label>
+                        <div class="input-with-unit">
+                            <input type="number" id="darlehensbetrag" class="form-input" placeholder="250000" step="0.01" required>
+                            <span class="input-unit">€</span>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="sollzins" class="form-label">
+                            Sollzins p.a.
+                            <span class="info-icon" data-tooltip="Der jährliche Zinssatz, den Sie für das Darlehen zahlen müssen. Je niedriger der Zinssatz, desto günstiger ist Ihr Kredit.">?</span>
+                        </label>
+                        <div class="input-with-unit">
+                            <input type="number" id="sollzins" class="form-input" placeholder="3.5" step="0.01" required>
+                            <span class="input-unit">%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="zinsbindung" class="form-label">
+                            Sollzinsbindung
+                            <span class="info-icon" data-tooltip="Der Zeitraum, für den der Zinssatz festgeschrieben ist. Nach Ablauf dieser Frist wird eine Anschlussfinanzierung mit neuem Zinssatz fällig.">?</span>
+                        </label>
+                        <div class="input-with-unit">
+                            <input type="number" id="zinsbindung" class="form-input" placeholder="10" step="1" required>
+                            <span class="input-unit">Jahre</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Berechnungsmethode -->
+            <div class="form-section">
+                <h3 class="form-section-title">Berechnungsmethode</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="methode" value="tilgung" checked onchange="toggleMethode()">
+                        <span class="radio-label">
+                            <strong>Anfängliche Tilgung</strong>
+                            <small>Berechnung basierend auf Tilgungssatz</small>
+                        </span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="methode" value="rate" onchange="toggleMethode()">
+                        <span class="radio-label">
+                            <strong>Monatliche Rate</strong>
+                            <small>Geben Sie Ihre gewünschte monatliche Zahlung an</small>
+                        </span>
+                    </label>
+                </div>
+
+                <div class="form-field" id="tilgung-group">
+                    <label for="tilgungssatz" class="form-label">
+                        Anfänglicher Tilgungssatz p.a.
+                        <span class="info-icon" data-tooltip="Der prozentuale Anteil des Darlehens, der jährlich zurückgezahlt wird. Üblich sind 2-3%. Je höher die Tilgung, desto schneller sind Sie schuldenfrei.">?</span>
+                    </label>
+                    <div class="input-with-unit">
+                        <input type="number" id="tilgungssatz" class="form-input" placeholder="2.0" step="0.01">
+                        <span class="input-unit">%</span>
                     </div>
                 </div>
 
-                <div class="form-group" id="rate-group">
-                    <label for="monatlicherate">Monatliche Rate (€)</label>
-                    <input type="number" id="monatlicherate" placeholder="1200" step="0.01">
-                </div>
-
-                <div class="form-group hidden" id="tilgung-group">
-                    <label for="tilgungssatz">Anfänglicher Tilgungssatz p.a. (%)</label>
-                    <input type="number" id="tilgungssatz" placeholder="2.0" step="0.01">
-                </div>
-
-                <div class="sondertilgung-section">
-                    <h3>Sondertilgungen</h3>
-                    <div id="sondertilgungen"></div>
-                    <button class="btn-add" onclick="addSondertilgung()">+ Sondertilgung hinzufügen</button>
-                </div>
-
-                <button type="submit" class="btn-calculate">Tilgungsplan berechnen</button>
-            </form>
-
-            <div id="results" class="results hidden">
-                <div class="summary" id="summary"></div>
-                <div class="table-container">
-                    <table id="tilgungsplan">
-                        <thead>
-                            <tr>
-                                <th>Monat</th>
-                                <th>Rate</th>
-                                <th>Zinsen</th>
-                                <th>Tilgung</th>
-                                <th>Sondertilgung</th>
-                                <th>Restschuld</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tilgungsplan-body"></tbody>
-                    </table>
+                <div class="form-field hidden" id="rate-group">
+                    <label for="monatlicherate" class="form-label">
+                        Monatliche Rate
+                        <span class="info-icon" data-tooltip="Der feste Betrag, den Sie monatlich an die Bank zahlen möchten. Dieser setzt sich aus Zins- und Tilgungsanteil zusammen.">?</span>
+                    </label>
+                    <div class="input-with-unit">
+                        <input type="number" id="monatlicherate" class="form-input" placeholder="1200" step="0.01">
+                        <span class="input-unit">€</span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Sondertilgungen -->
+            <div class="form-section">
+                <h3 class="form-section-title">Sondertilgungen</h3>
+                <div id="sondertilgungen" class="sondertilgungen-list"></div>
+                <button type="button" class="btn-secondary" onclick="addSondertilgung()">+ Sondertilgung hinzufügen</button>
+            </div>
+
+            <button type="submit" class="btn-primary">Tilgungsplan berechnen</button>
+        </form>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="results-section hidden">
+        <div class="section-header">
+            <div class="section-label">Ergebnis</div>
+            <h2 class="section-title">Ihr Tilgungsplan</h2>
         </div>
-    </div>
+
+        <div class="summary-grid" id="summary"></div>
+
+        <div class="table-wrapper">
+            <div class="table-header">
+                <h3>Detaillierte Aufstellung</h3>
+                <p>Monat für Monat — Zinsen, Tilgung, Restschuld</p>
+            </div>
+            <div class="table-container">
+                <table id="tilgungsplan">
+                    <thead>
+                        <tr>
+                            <th>Monat</th>
+                            <th>Rate</th>
+                            <th>Zinsen</th>
+                            <th>Tilgung</th>
+                            <th>Sondertilgung</th>
+                            <th>Restschuld</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tilgungsplan-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 
     <script src="script.js"></script>
 </body>

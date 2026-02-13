@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Navy background -->
+  <rect width="32" height="32" fill="#1a2332"/>
+
+  <!-- Descending bars representing amortization -->
+  <g fill="#d4a574">
+    <!-- Bar 1 (tallest) -->
+    <rect x="5" y="8" width="4" height="16" rx="1"/>
+
+    <!-- Bar 2 -->
+    <rect x="11" y="12" width="4" height="12" rx="1"/>
+
+    <!-- Bar 3 -->
+    <rect x="17" y="16" width="4" height="8" rx="1"/>
+
+    <!-- Bar 4 (shortest) -->
+    <rect x="23" y="19" width="4" height="5" rx="1"/>
+  </g>
+
+  <!-- Subtle baseline -->
+  <line x1="4" y1="25" x2="28" y2="25" stroke="#d4a574" stroke-width="0.5" opacity="0.5"/>
+</svg>

@@ -25,9 +25,18 @@ function addSondertilgung() {
     const div = document.createElement('div');
     div.className = 'sondertilgung-entry';
     div.innerHTML = `
-        <input type="number" placeholder="Monat (z.B. 12)" min="1" step="1" data-id="${sondertilgungCounter}" class="st-monat">
-        <input type="number" placeholder="Betrag (€)" step="0.01" data-id="${sondertilgungCounter}" class="st-betrag">
-        <button class="btn-remove" onclick="removeSondertilgung(this)">✕</button>
+        <div class="form-field">
+            <label class="form-label">Monat</label>
+            <input type="number" placeholder="12" min="1" step="1" data-id="${sondertilgungCounter}" class="st-monat form-input">
+        </div>
+        <div class="form-field">
+            <label class="form-label">Betrag</label>
+            <div class="input-with-unit">
+                <input type="number" placeholder="5000" step="0.01" data-id="${sondertilgungCounter}" class="st-betrag form-input">
+                <span class="input-unit">€</span>
+            </div>
+        </div>
+        <button type="button" class="btn-remove" onclick="removeSondertilgung(this)">✕</button>
     `;
     container.appendChild(div);
     sondertilgungCounter++;
@@ -227,15 +236,15 @@ function displayResults(plan, gesamtZinsen, gesamtTilgung, gesamtSondertilgung, 
             <p>${formatCurrency(gesamtZinsen)}</p>
         </div>
         <div class="summary-card">
-            <h4>Gesamtbetrag inkl. Zinsen</h4>
+            <h4>Gesamtbetrag</h4>
             <p>${formatCurrency(gesamtbetrag)}</p>
         </div>
         <div class="summary-card">
-            <h4>Restschuld bei Zinsbindungsende</h4>
+            <h4>Restschuld Zinsbindungsende</h4>
             <p>${formatCurrency(restschuldZinsbindung)}</p>
         </div>
         <div class="summary-card">
-            <h4>Laufzeit</h4>
+            <h4>Laufzeit bis Rückzahlung</h4>
             <p>${laufzeitText}</p>
         </div>
     `;

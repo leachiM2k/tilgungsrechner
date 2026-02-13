@@ -163,7 +163,7 @@ function displayResultsReverse(jahr, zinssatz, restschuldAnfang, restschuldEnde,
     let summaryHTML = `
         <div class="summary-card">
             <h4>Berechneter Zinssatz p.a.</h4>
-            <p style="color: #2e7d32; font-weight: 700;">${formatPercent(zinssatz)}</p>
+            <p>${formatPercent(zinssatz)}</p>
         </div>
         <div class="summary-card">
             <h4>Monatliche Rate</h4>
@@ -191,9 +191,9 @@ function displayResultsReverse(jahr, zinssatz, restschuldAnfang, restschuldEnde,
         }
 
         summaryHTML += `
-            <div class="summary-card" style="background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);">
+            <div class="summary-card">
                 <h4>Urspr. Darlehensbetrag</h4>
-                <p style="color: white; font-weight: 700;">${formatCurrency(urspruenglicherBetrag)}</p>
+                <p>${formatCurrency(urspruenglicherBetrag)}</p>
             </div>
             <div class="summary-card">
                 <h4>Kreditbeginn</h4>
@@ -203,9 +203,9 @@ function displayResultsReverse(jahr, zinssatz, restschuldAnfang, restschuldEnde,
                 <h4>Laufzeit bis 01.01.${jahr}</h4>
                 <p>${laufzeitText}</p>
             </div>
-            <div class="summary-card" style="background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);">
-                <h4>Restschuld bei Zinsbindungsende</h4>
-                <p style="color: white; font-weight: 700;">${formatCurrency(restschuldZinsbindung)}</p>
+            <div class="summary-card">
+                <h4>Restschuld Zinsbindungsende</h4>
+                <p>${formatCurrency(restschuldZinsbindung)}</p>
             </div>
         `;
     } else {
@@ -225,9 +225,9 @@ function displayResultsReverse(jahr, zinssatz, restschuldAnfang, restschuldEnde,
 
     // Detaillierte Aufschlüsselung
     let explanationHTML = `
-        <h4 style="color: #333; margin-top: 0; margin-bottom: 15px;">📊 Detaillierte Aufschlüsselung</h4>
-        <div style="background: white; padding: 20px; border-radius: 8px; border: 2px solid #e0e0e0; margin-bottom: 20px;">
-            <table style="width: 100%; border-collapse: collapse;">
+        <h4 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--color-navy); margin-top: 0; margin-bottom: var(--space-md);">📊 Detaillierte Aufschlüsselung</h4>
+        <div style="background: var(--color-cream); padding: var(--space-lg); margin-bottom: var(--space-lg); border: 2px solid var(--color-grey-light);">
+            <table style="width: 100%; border-collapse: collapse; font-family: var(--font-body);">
     `;
 
     // Wenn ursprünglicher Betrag berechnet wurde, zeige vollständige Timeline
@@ -240,52 +240,52 @@ function displayResultsReverse(jahr, zinssatz, restschuldAnfang, restschuldEnde,
         zinsbindungsEndeDatum.setMonth(zinsbindungsEndeDatum.getMonth() + (zinsbindungJahre * 12));
 
         explanationHTML += `
-                <tr style="border-bottom: 2px solid #66bb6a;">
-                    <td style="padding: 12px 0; color: #2e7d32; font-weight: 600;">Urspr. Darlehensbetrag am ${startdatumKredit.toLocaleDateString('de-DE')}</td>
-                    <td style="padding: 12px 0; text-align: right; color: #2e7d32; font-weight: 700; font-size: 1.1em;">${formatCurrency(urspruenglicherBetrag)}</td>
+                <tr style="border-bottom: 2px solid var(--color-amber);">
+                    <td style="padding: 12px 0; color: var(--color-navy); font-weight: 600;">Urspr. Darlehensbetrag am ${startdatumKredit.toLocaleDateString('de-DE')}</td>
+                    <td style="padding: 12px 0; text-align: right; color: var(--color-navy); font-weight: 600; font-family: var(--font-mono);">${formatCurrency(urspruenglicherBetrag)}</td>
                 </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px 0; color: #999; font-style: italic;">Gezahlte Zinsen bis 01.01.${jahr}</td>
-                    <td style="padding: 12px 0; text-align: right; color: #999; font-style: italic;">${formatCurrency(gesamtZinsenBisJahr)}</td>
+                <tr style="border-bottom: 1px solid var(--color-grey-light);">
+                    <td style="padding: 12px 0; color: var(--color-grey); font-style: italic;">Gezahlte Zinsen bis 01.01.${jahr}</td>
+                    <td style="padding: 12px 0; text-align: right; color: var(--color-grey); font-style: italic; font-family: var(--font-mono);">${formatCurrency(gesamtZinsenBisJahr)}</td>
                 </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px 0; color: #999; font-style: italic;">Geleistete Tilgung bis 01.01.${jahr}</td>
-                    <td style="padding: 12px 0; text-align: right; color: #999; font-style: italic;">${formatCurrency(gesamtTilgungBisJahr)}</td>
+                <tr style="border-bottom: 1px solid var(--color-grey-light);">
+                    <td style="padding: 12px 0; color: var(--color-grey); font-style: italic;">Geleistete Tilgung bis 01.01.${jahr}</td>
+                    <td style="padding: 12px 0; text-align: right; color: var(--color-grey); font-style: italic; font-family: var(--font-mono);">${formatCurrency(gesamtTilgungBisJahr)}</td>
                 </tr>
-                <tr style="border-bottom: 2px solid #42a5f5;">
-                    <td style="padding: 12px 0; color: #1976d2; font-weight: 600;">Restschuld bei Zinsbindungsende (${zinsbindungsEndeDatum.toLocaleDateString('de-DE')})</td>
-                    <td style="padding: 12px 0; text-align: right; color: #1976d2; font-weight: 700; font-size: 1.1em;">${formatCurrency(restschuldZinsbindung)}</td>
+                <tr style="border-bottom: 2px solid var(--color-amber);">
+                    <td style="padding: 12px 0; color: var(--color-navy); font-weight: 600;">Restschuld bei Zinsbindungsende (${zinsbindungsEndeDatum.toLocaleDateString('de-DE')})</td>
+                    <td style="padding: 12px 0; text-align: right; color: var(--color-navy); font-weight: 600; font-family: var(--font-mono);">${formatCurrency(restschuldZinsbindung)}</td>
                 </tr>
         `;
     }
 
     explanationHTML += `
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px 0; color: #666;">Restschuld am 01.01.${jahr}</td>
-                    <td style="padding: 12px 0; text-align: right; font-weight: 600;">${formatCurrency(restschuldAnfang)}</td>
+                <tr style="border-bottom: 1px solid var(--color-grey-light);">
+                    <td style="padding: 12px 0; color: var(--color-grey-dark);">Restschuld am 01.01.${jahr}</td>
+                    <td style="padding: 12px 0; text-align: right; font-weight: 600; font-family: var(--font-mono);">${formatCurrency(restschuldAnfang)}</td>
                 </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px 0; color: #666;">Gezahlte Zinsen in ${jahr}</td>
-                    <td style="padding: 12px 0; text-align: right; color: #e74c3c; font-weight: 600;">${formatCurrency(zinsenJahr)}</td>
+                <tr style="border-bottom: 1px solid var(--color-grey-light);">
+                    <td style="padding: 12px 0; color: var(--color-grey-dark);">Gezahlte Zinsen in ${jahr}</td>
+                    <td style="padding: 12px 0; text-align: right; font-weight: 600; font-family: var(--font-mono);">${formatCurrency(zinsenJahr)}</td>
                 </tr>
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px 0; color: #666;">Geleistete Tilgung in ${jahr}</td>
-                    <td style="padding: 12px 0; text-align: right; color: #2e7d32; font-weight: 600;">${formatCurrency(tilgungJahr)}</td>
+                <tr style="border-bottom: 1px solid var(--color-grey-light);">
+                    <td style="padding: 12px 0; color: var(--color-grey-dark);">Geleistete Tilgung in ${jahr}</td>
+                    <td style="padding: 12px 0; text-align: right; font-weight: 600; font-family: var(--font-mono);">${formatCurrency(tilgungJahr)}</td>
                 </tr>
-                <tr style="border-bottom: 2px solid #667eea;">
-                    <td style="padding: 12px 0; color: #666;">Restschuld am 31.12.${jahr}</td>
-                    <td style="padding: 12px 0; text-align: right; font-weight: 600;">${formatCurrency(restschuldEnde)}</td>
+                <tr style="border-bottom: 2px solid var(--color-grey-light);">
+                    <td style="padding: 12px 0; color: var(--color-grey-dark);">Restschuld am 31.12.${jahr}</td>
+                    <td style="padding: 12px 0; text-align: right; font-weight: 600; font-family: var(--font-mono);">${formatCurrency(restschuldEnde)}</td>
                 </tr>
                 <tr>
-                    <td style="padding: 12px 0; color: #667eea; font-weight: 600;">Berechneter Zinssatz p.a.</td>
-                    <td style="padding: 12px 0; text-align: right; color: #667eea; font-weight: 700; font-size: 1.2em;">${formatPercent(zinssatz)}</td>
+                    <td style="padding: 12px 0; color: var(--color-navy); font-weight: 600;">Berechneter Zinssatz p.a.</td>
+                    <td style="padding: 12px 0; text-align: right; color: var(--color-amber-dark); font-weight: 600; font-size: 1.2em; font-family: var(--font-mono);">${formatPercent(zinssatz)}</td>
                 </tr>
             </table>
         </div>
 
-        <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 4px solid #66bb6a;">
-            <strong style="color: #2e7d32;">✓ Berechnung erfolgreich</strong>
-            <p style="color: #666; margin: 10px 0 0 0; font-size: 0.95em;">
+        <div style="background: rgba(212, 165, 116, 0.1); padding: var(--space-md); border-left: 4px solid var(--color-amber);">
+            <strong style="color: var(--color-navy); font-family: var(--font-body);">✓ Berechnung erfolgreich</strong>
+            <p style="color: var(--color-grey-dark); margin: 10px 0 0 0; line-height: 1.6;">
     `;
 
     if (urspruenglicherBetrag !== null) {

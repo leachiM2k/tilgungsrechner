@@ -3,76 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kredit-Rückrechner - Darlehensdaten ermitteln</title>
+    <title>Kredit-Rückrechner — Darlehensdaten ermitteln</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🔍 Kredit-Rückrechner</h1>
-            <p>Ermitteln Sie Ihre ursprünglichen Darlehensdaten</p>
-            <div style="margin-top: 10px;">
-                <a href="index.html" style="color: #fff; text-decoration: underline;">→ Zum normalen Tilgungsrechner</a>
+    <!-- Hero Section -->
+    <section class="hero" id="hero" style="min-height: 60vh;">
+        <div class="hero-content">
+            <div class="hero-label">Rückrechner</div>
+            <h1 class="hero-title" style="font-size: clamp(2.5rem, 6vw, 4rem);">
+                Ermitteln Sie<br>
+                Ihre Darlehensdaten.
+            </h1>
+            <p class="hero-description">
+                Sie haben einen Jahreskontoauszug, kennen aber die ursprünglichen
+                Kreditkonditionen nicht mehr? Dieser Rechner ermittelt aus den
+                Jahreswerten den exakten Zinssatz und die ursprüngliche Darlehenssumme.
+            </p>
+            <div class="hero-tools" style="margin-top: var(--space-lg); padding-top: 0; border: none;">
+                <a href="index.html" class="tool-link">→ Zum normalen Tilgungsrechner</a>
             </div>
         </div>
+    </section>
 
-        <div class="content">
-            <form id="reverse-calculator-form" class="form-section">
-                <div class="info-box" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #1565c0; border: 2px solid #90caf9;">
-                    <strong>💡 So funktioniert's:</strong> Geben Sie die Jahreswerte vom Kontoauszug ein.
-                    Der Rechner berechnet daraus den <strong>exakten Zinssatz</strong> und die Restschuld am Jahresanfang.
-                </div>
+    <!-- Calculator Section -->
+    <section class="calculator-section" id="calculator">
+        <div class="section-header">
+            <div class="section-label">Eingabe</div>
+            <h2 class="section-title">Daten vom Kontoauszug</h2>
+        </div>
 
-                <div class="form-group">
-                    <label for="jahr">Jahr des Kontoauszugs</label>
-                    <input type="number" id="jahr" placeholder="2024" min="2000" max="2100" required>
-                    <small style="color: #666; font-size: 0.9em;">Welches Jahr betrachten Sie?</small>
-                </div>
+        <div class="info-box" style="background: rgba(212, 165, 116, 0.1); padding: var(--space-lg); border-radius: 0; margin-bottom: var(--space-2xl); color: var(--color-navy); border-left: 4px solid var(--color-amber);">
+            <strong style="font-family: var(--font-body); font-size: 1rem; display: block; margin-bottom: 0.5rem;">💡 So funktioniert's</strong>
+            <p style="margin: 0; line-height: 1.6; color: var(--color-grey-dark);">
+                Geben Sie die Jahreswerte von Ihrem Kontoauszug ein. Der Rechner berechnet daraus den
+                <strong>exakten Zinssatz</strong> und die Restschuld am Jahresanfang.
+            </p>
+        </div>
 
-                <div class="form-group">
-                    <label for="restschuld-ende">Restschuld am Ende des Jahres (€)</label>
-                    <input type="number" id="restschuld-ende" placeholder="240000" step="0.01" required>
-                    <small style="color: #666; font-size: 0.9em;">Welche Restschuld zeigt der Kontoauszug am 31.12.?</small>
-                </div>
+        <form id="reverse-calculator-form" class="calculator-form">
+            <!-- Jahreswerte -->
+            <div class="form-section">
+                <h3 class="form-section-title">Jahreswerte vom Kontoauszug</h3>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="jahr" class="form-label">
+                            Jahr des Kontoauszugs
+                            <span class="info-icon" data-tooltip="Das Kalenderjahr, für das Sie die Daten vom Kontoauszug ablesen. Zum Beispiel 2024 für die Werte vom 01.01. bis 31.12.2024.">?</span>
+                        </label>
+                        <input type="number" id="jahr" class="form-input" placeholder="2024" min="2000" max="2100" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="zinsen-jahr">Gezahlte Zinsen im Jahr (€)</label>
-                    <input type="number" id="zinsen-jahr" placeholder="6000" step="0.01" required>
-                    <small style="color: #666; font-size: 0.9em;">Summe aller Zinszahlungen im Jahr</small>
-                </div>
+                    <div class="form-field">
+                        <label for="restschuld-ende" class="form-label">
+                            Restschuld Jahresende
+                            <span class="info-icon" data-tooltip="Die Restschuld, die am 31.12. des Jahres auf Ihrem Kontoauszug steht. Dies ist der Betrag, den Sie am Ende des Jahres noch schulden.">?</span>
+                        </label>
+                        <div class="input-with-unit">
+                            <input type="number" id="restschuld-ende" class="form-input" placeholder="240000" step="0.01" required>
+                            <span class="input-unit">€</span>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="tilgung-jahr">Geleistete Tilgung im Jahr (€)</label>
-                    <input type="number" id="tilgung-jahr" placeholder="8400" step="0.01" required>
-                    <small style="color: #666; font-size: 0.9em;">Summe aller Tilgungszahlungen im Jahr</small>
-                </div>
+                    <div class="form-field">
+                        <label for="zinsen-jahr" class="form-label">
+                            Gezahlte Zinsen im Jahr
+                            <span class="info-icon" data-tooltip="Die Summe aller Zinszahlungen, die Sie im gesamten Jahr geleistet haben. Diese Summe finden Sie auf Ihrem Jahreskontoauszug.">?</span>
+                        </label>
+                        <div class="input-with-unit">
+                            <input type="number" id="zinsen-jahr" class="form-input" placeholder="6000" step="0.01" required>
+                            <span class="input-unit">€</span>
+                        </div>
+                    </div>
 
-                <div class="form-group">
-                    <label for="startdatum-kredit">Vermuteter Kreditbeginn (optional)</label>
-                    <input type="date" id="startdatum-kredit">
-                    <small style="color: #666; font-size: 0.9em;">Wann hat der Kredit ungefähr begonnen? Berechnet den ursprünglichen Darlehensbetrag.</small>
-                </div>
-
-                <div class="form-group">
-                    <label for="zinsbindung-jahre">Zinsbindung (Jahre)</label>
-                    <input type="number" id="zinsbindung-jahre" placeholder="10" step="1" required>
-                    <small style="color: #666; font-size: 0.9em;">Wie lange ist/war Ihr Zinssatz festgeschrieben?</small>
-                </div>
-
-                <button type="submit" class="btn-calculate">Darlehensdaten berechnen</button>
-            </form>
-
-            <div id="results-reverse" class="results hidden">
-                <h2 style="color: #333; margin-bottom: 20px;">📊 Berechnete Darlehensdaten</h2>
-                <div class="summary" id="summary-reverse"></div>
-
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px; color: #333; border: 2px solid #e0e0e0;">
-                    <h3 style="margin-top: 0;">ℹ️ Erläuterung</h3>
-                    <div id="explanation"></div>
+                    <div class="form-field">
+                        <label for="tilgung-jahr" class="form-label">
+                            Geleistete Tilgung im Jahr
+                            <span class="info-icon" data-tooltip="Die Summe aller Tilgungszahlungen im Jahr. Dies ist der Teil Ihrer Zahlungen, der direkt die Schuld reduziert hat.">?</span>
+                        </label>
+                        <div class="input-with-unit">
+                            <input type="number" id="tilgung-jahr" class="form-input" placeholder="8400" step="0.01" required>
+                            <span class="input-unit">€</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <!-- Zusatzinformationen -->
+            <div class="form-section">
+                <h3 class="form-section-title">Zusatzinformationen (optional)</h3>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="startdatum-kredit" class="form-label">
+                            Vermuteter Kreditbeginn
+                            <span class="info-icon" data-tooltip="Falls bekannt: Das ungefähre Datum, an dem der Kredit ausgezahlt wurde. Damit kann der ursprüngliche Darlehensbetrag berechnet werden.">?</span>
+                        </label>
+                        <input type="date" id="startdatum-kredit" class="form-input">
+                    </div>
+
+                    <div class="form-field">
+                        <label for="zinsbindung-jahre" class="form-label">
+                            Zinsbindung
+                            <span class="info-icon" data-tooltip="Die Dauer der Zinsbindung in Jahren. Dieser Wert hilft bei der Gesamteinschätzung Ihres Kredits.">?</span>
+                        </label>
+                        <div class="input-with-unit">
+                            <input type="number" id="zinsbindung-jahre" class="form-input" placeholder="10" step="1" required>
+                            <span class="input-unit">Jahre</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Darlehensdaten berechnen</button>
+        </form>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-reverse" class="results-section hidden">
+        <div class="section-header">
+            <div class="section-label">Ergebnis</div>
+            <h2 class="section-title">Berechnete Darlehensdaten</h2>
         </div>
-    </div>
+
+        <div class="summary-grid" id="summary-reverse"></div>
+
+        <div class="info-box" style="background: white; padding: var(--space-xl); border-radius: 0; margin-top: var(--space-2xl); color: var(--color-navy); border: 2px solid var(--color-grey-light);">
+            <h3 style="font-family: var(--font-display); font-size: 1.5rem; margin-bottom: var(--space-md); color: var(--color-navy);">ℹ️ Erläuterung</h3>
+            <div id="explanation" style="color: var(--color-grey-dark); line-height: 1.8;"></div>
+        </div>
+    </section>
 
     <script src="reverse.js"></script>
 </body>
